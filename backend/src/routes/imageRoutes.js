@@ -3,7 +3,7 @@ import { getImageById, getImageByName, getAllImages, getCreatedImageByUserId, ge
 const imageRoute = express.Router()
 
 //* 
-imageRoute.get("/getAllImages", getAllImages)
+imageRoute.get("/getImageList", getAllImages)
 
 //*
 imageRoute.get("/getImageById/:imageId", getImageById)
@@ -19,4 +19,4 @@ imageRoute.get("/getSavedImage/:userId", getSavedImageByUserId)
 
 //!
 imageRoute.delete("/deleteImage", deleteImage)
-export default imageRoute
+export default imageRoute  

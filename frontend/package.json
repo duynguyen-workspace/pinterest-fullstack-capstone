@@ -10,8 +10,22 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@fontsource-variable/open-sans": "^5.0.21",
+    "@reduxjs/toolkit": "^2.0.1",
+    "@tanstack/react-query": "^5.14.1",
+    "autoprefixer": "^10.4.16",
+    "axios": "^1.6.2",
+    "dayjs": "^1.11.10",
+    "flowbite": "^2.2.1",
+    "flowbite-react": "^0.7.2",
+    "postcss": "^8.4.32",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.49.2",
+    "react-lottie": "^1.2.3",
+    "react-redux": "^9.0.4",
+    "react-router-dom": "^6.21.0",
+    "redux": "^5.0.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",
@@ -21,6 +35,7 @@
     "eslint-plugin-react": "^7.32.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
+    "tailwindcss": "^3.3.6",
     "vite": "^4.4.5"
   }
 }

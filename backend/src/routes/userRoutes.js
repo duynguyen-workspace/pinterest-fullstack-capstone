@@ -4,10 +4,8 @@ const userRoute = express.Router()
 
 //* LOGIN AND REGISTER
 userRoute.post("/login", userLogin);
-userRoute.post("/signup", userSignUp);
-
+userRoute.post("/register", userSignUp);
 userRoute.get("/getUserById/:userId", getUserById)
-
 userRoute.put("updateUser", updateUser)
 
 

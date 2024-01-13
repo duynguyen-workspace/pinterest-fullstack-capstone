@@ -16,7 +16,7 @@ const userSignUp = async (req, res) => {
     // console.log(user)
 
     if (user.length != 0) {
-        res.send("Email đã tồn tại")
+        res.status(404).send("Email has already existed, please enter again!");
         return;
     }
 
@@ -32,7 +32,7 @@ const userSignUp = async (req, res) => {
 
     await prisma.users.create({data: newUser}); 
 
-    res.send("Đăng ký thành công");
+    res.status(200).send("Register successfully!");
 }
 
 //*
@@ -48,16 +48,16 @@ const userLogin = async (req, res) => {
 
     //* Check if user exists
     if (user) {
-        let checkPass = await bcrypt.compareSync(user_password, user.user_password)
+        let checkPass = bcrypt.compareSync(user_password, user.user_password)
         if (checkPass) {
             //* json web token
             let token = createToken({user, user_password: ""})
             res.status(200).send(token);
         } else {
-            res.status(404).send("Mật khẩu không đúng");
+            res.status(404).send("Invalid password!");
         }
     } else {
-        res.status(404).send("Email không đúng");
+        res.status(404).send("Invalid email!");
     }
 }
 
@@ -97,9 +97,9 @@ const updateUser = async (req, res) => {
         where: {
             user_id: user_id
         }
-    });
+    }); 
 
-    res.send("Update info successfully");
+    res.send("Update information successfully!");
 }
 
 export {userLogin, userSignUp, getUserById, updateUser}

@@ -29,8 +29,8 @@ const getImageById = async (req, res) => {
             image_id: parseInt(imageId)
         },
         include: {
-            users: true
-        }
+            users: true 
+        } 
     });
 
     res.send(data)
@@ -39,7 +39,7 @@ const getImageById = async (req, res) => {
 const getCreatedImageByUserId = async (req, res) => {
     let { userId } = req.params;
 
-    const data = await prisma.images.findFirst({
+    const data = await prisma.images.findFirst({ 
         where: {
             user_id: parseInt(userId)
         },
