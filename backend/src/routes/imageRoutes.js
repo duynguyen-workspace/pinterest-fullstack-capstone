@@ -7,10 +7,10 @@ const imageRoute = express.Router()
 //* 
 imageRoute.get("/get-images", handleAsync(getImages))
 imageRoute.get("/get-image-by-id/:imageId", handleAsync(getImageById))
-imageRoute.get("/search-images/:searchTerm", searchImages)
-imageRoute.get("/get-created-images/:userId", getCreatedImagesByUserId)
-imageRoute.get("/get-saved-images/:userId", getSavedImagesByUserId)
+imageRoute.get("/search-images/:searchTerm", handleAsync(searchImages))
+imageRoute.get("/get-created-images/:userId", handleAsync(getCreatedImagesByUserId))
+imageRoute.get("/get-saved-images/:userId", handleAsync(getSavedImagesByUserId))
 
 //!
-imageRoute.delete("/delete-image", deleteImage)
+imageRoute.delete("/delete-image", handleAsync(deleteImage))
 export default imageRoute  
