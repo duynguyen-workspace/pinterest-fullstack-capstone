@@ -6,9 +6,6 @@ const prisma = new PrismaClient()
 
 /**
  * * Middleware Function: Authenticate user
- * @param {*} req 
- * @param {*} res 
- * @param {*} next 
  */
 const lockApi = (req, res, next) => { 
     try {
@@ -23,9 +20,6 @@ const lockApi = (req, res, next) => {
 
 /**
  * * Middleware Function: Reset refresh token
- * @param {*} req 
- * @param {*} res 
- * @returns 
  */
 const resetToken = async (req, res) => {
     // Verify token
