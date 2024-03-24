@@ -2,11 +2,12 @@ import jwt from 'jsonwebtoken';
 
 /**
  * * Function: Generate Token
- * @param {*} data: object contains user's info (user_id) and key (current datetime)
- * @returns: jwt encrypted token
  * ? Encryption Algorithm: HS256
  * ? Secret Key: PINTEREST_SECRET
  * ? Expiration: 3 hours
+ * 
+ * @param {*} data: object contains user's info (user_id) and key (current datetime)
+ * @returns: jwt encrypted token
  */
 const createToken = (data) => {
     
@@ -18,9 +19,10 @@ const createToken = (data) => {
 
 /**
  * * Function: Validate Token
+ * ? Secret Key: PINTEREST_SECRET
+ * 
  * @param {*} token
  * @returns boolean
- * ? Secret Key: PINTEREST_SECRET
  */
 const checkToken = (token) => {
     return jwt.verify(token, "PINTEREST_SECRET", error => error);
@@ -37,11 +39,12 @@ const decodeToken = (token) => {
 
 /**
  * * Function: Generate Refresh Token
- * @param {*} data: object contains user's info (user_id) and key (current datetime)
- * @returns: jwt encrypted token
  * ? Encryption Algorithm: HS256
  * ? Secret Key: PINTEREST_SECRET_REF
  * ? Expiration: 3 hours
+ * 
+ * @param {*} data: object contains user's info (user_id) and key (current datetime)
+ * @returns: jwt encrypted token
  */
 const createRefToken = (data) => {
     let token = jwt.sign(data, "PINTEREST_SECRET_REF", { 
@@ -53,9 +56,10 @@ const createRefToken = (data) => {
 
 /**
  * * Function: Validate Refresh Token
+ * ? Secret Key: PINTEREST_SECRET_REF
+ * 
  * @param {*} token
  * @returns boolean
- * ? Secret Key: PINTEREST_SECRET_REF
  */
 const checkRefToken = (token) => {
     return jwt.verify(token, "PINTEREST_SECRET_REF", error => error);
@@ -64,5 +68,7 @@ const checkRefToken = (token) => {
 export {
     createToken,
     checkToken,
-    decodeToken
+    decodeToken,
+    createRefToken,
+    checkRefToken
 }

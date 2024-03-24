@@ -1,5 +1,5 @@
 //? CONFIGURE SERVER RESPONSE
-export const responseData = (res, message, code, data) => {
+export default (res, message, code, data) => {
     res.status(code).json({
         message,
         code,
