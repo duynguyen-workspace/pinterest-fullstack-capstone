@@ -24,7 +24,7 @@ model images {
   image_id    Int           @id @default(autoincrement())
   user_id     Int
   image_name  String?       @db.VarChar(100)
-  url         String?       @db.VarChar(255)
+  url         String?       @db.Text
   description String?       @db.VarChar(100)
   comments    comments[]
   users       users         @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "images_ibfk_1")
@@ -49,9 +49,15 @@ model users {
   full_name     String?       @db.VarChar(100)
   age           Int?
   email         String?       @db.VarChar(100)
-  user_password String?       @db.VarChar(50)
+  user_password String?       @db.VarChar(255)
   avatar        String?       @db.VarChar(100)
   comments      comments[]
   images        images[]
   user_images   user_images[]
+}
+
+model code {
+  id      Int       @id @default(autoincrement())
+  code    String?   @db.VarChar(255)
+  expired DateTime? @db.DateTime(0)
 }

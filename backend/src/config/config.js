@@ -1,6 +1,6 @@
-//* Initialise environment variables
-
 import dotenv from 'dotenv';
+
+//? CONFIGURE ENVIRONMENT VARIABLES
 dotenv.config();
 
 export default {
@@ -9,5 +9,7 @@ export default {
     userName: process.env.USERNAME,
     pass: process.env.PASS,
     port: process.env.PORT,
-    dialect: process.env.DIALECT
+    dialect: process.env.DIALECT,
 }
+
+// console.log(process.env)

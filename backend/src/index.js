@@ -1,19 +1,22 @@
-//? INITIALISE EXPRESS APP
-
 import express from 'express';
 import cors from 'cors'; 
-import rootRoute from './routes/rootRoutes.js';
+import rootRoute from './routes/rootRoute.js';
 
+//? INITIALISE EXPRESS APP
 const app = express();
 
-//? MIDDLEWARE FUNCTIONS
-app.use(express.json());
-app.use(express.static(".")) //* Định vị lại đường dẫn để load tài nguyên ở BE
+//? MIDDLEWARE
+// Configuring app to use json
+app.use(express.json())
 
-//* cors middleware
+// Positioning original directory path
+app.use(express.static("."))
+
+// Access permission for cross-platform applications
 app.use(cors())
 
-//? PORT INITIALISATION
-app.listen(8080);
+// Configuring root endpoint for calling APIs
+app.use(rootRoute)
 
-app.use("/api",rootRoute)
+//? START SERVER at PORT (8080)
+app.listen(8080);
