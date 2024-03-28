@@ -37,6 +37,7 @@ model user_images {
   user_id    Int
   image_id   Int
   saved_date DateTime @db.DateTime(0)
+  status     Boolean?
   users      users    @relation(fields: [user_id], references: [user_id], onDelete: NoAction, onUpdate: NoAction, map: "user_images_ibfk_1")
   images     images   @relation(fields: [image_id], references: [image_id], onDelete: NoAction, onUpdate: NoAction, map: "user_images_ibfk_2")
 
@@ -51,6 +52,8 @@ model users {
   email         String?       @db.VarChar(100)
   user_password String?       @db.VarChar(255)
   avatar        String?       @db.VarChar(100)
+  refresh_token String?       @db.Text
+  face_app_id   String?       @db.VarChar(255)
   comments      comments[]
   images        images[]
   user_images   user_images[]

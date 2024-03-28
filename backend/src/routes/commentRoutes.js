@@ -1,15 +1,14 @@
 import express from "express";
-import { commentImage, getCommentByImageId } from "../controllers/commentController.js";
+import { commentImage, getCommentsByImageId } from "../controllers/commentController.js";
+import { handleAsync } from "../utils/hof.js";
 
 const commentRoute = express.Router()
 
 //*
-commentRoute.get("/getCommentByImageId/:imageId", getCommentByImageId)
+commentRoute.get("/get-comments/:imageId", handleAsync(getCommentsByImageId))
 
 //*
-commentRoute.post("/comment", commentImage)
-
-//*
+commentRoute.post("/comment", handleAsync(commentImage))
 
 
 export default commentRoute

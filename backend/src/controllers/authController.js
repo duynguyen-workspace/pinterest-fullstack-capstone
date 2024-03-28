@@ -73,4 +73,4 @@ const resetToken = async (req, res) => {
     }
 }
 
-export default lockApi
+export { lockApi, resetToken }

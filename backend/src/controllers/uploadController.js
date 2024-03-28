@@ -1,4 +1,3 @@
-import sequelize from "../models/connect.js";
-import initModels from "../models/init-models.js";
+import { PrismaClient } from "@prisma/client";
 
-let model = initModels(sequelize);
+const prisma = new PrismaClient()

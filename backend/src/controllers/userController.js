@@ -1,105 +1,170 @@
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt'
-import { createToken, decodeToken } from "../config/jwt.js";
+import { createRefToken, createToken, decodeToken } from "../config/jwt.js";
+import responseData from '../config/responseData.js';
 
-let prisma = new PrismaClient()
+const prisma = new PrismaClient()
 
-//* 
-const userSignUp = async (req, res) => {
-    const { full_name, age, email, user_password } = req.body;
+/**
+ ** API: Register 
+ *? METHOD: POST
+ */
+const register = async (req, res) => {
+    const { full_name, email, user_password } = req.body;
 
-    const user = await prisma.users.findMany({
+    // Check if email already existed
+    const checkedUser = await prisma.users.findMany({
         where: {
             email: email
         }
     })
-    // console.log(user)
 
-    if (user.length != 0) {
-        res.status(404).send("Email has already existed, please enter again!");
+    if (checkedUser) {
+        responseData(res, "Email already existed", 404, null)
         return;
     }
 
-    //* 
+    // Encrypt password - saltRound: 10
     const encryptedPass = bcrypt.hashSync(user_password, 10)
+
     const newUser = {
         full_name,
-        age,
+        age: null,
         email,
-        user_password: encryptedPass, //* mã hoá password
+        user_password: encryptedPass,
         avatar:"",
     }
 
     await prisma.users.create({data: newUser}); 
 
-    res.status(200).send("Register successfully!");
+    responseData(res, "Register successfully!", 201, newUser)
 }
 
-//*
-const userLogin = async (req, res) => {
-    let {email, user_password} = req.body
+/**
+ ** API: Login
+ *? METHOD: POST
+ */
+const login = async (req, res) => {
+    const { email, password } = req.body
 
-    let user = await prisma.users.findFirst({
+    // Check if user exists
+    let checkedUser = await prisma.users.findFirst({
         where: {
             email: email
         }
     })
-    console.log(user)
 
-    //* Check if user exists
-    if (user) {
-        let checkPass = bcrypt.compareSync(user_password, user.user_password)
-        if (checkPass) {
-            //* json web token
-            let token = createToken({user, user_password: ""})
-            res.status(200).send(token);
-        } else {
-            res.status(404).send("Invalid password!");
-        }
-    } else {
-        res.status(404).send("Invalid email!");
+    if (!checkedUser) {
+        responseData(res, "Email not existed!", 404, null)
+        return
     }
-}
+    
+    // Check password
+    let checkedPw = bcrypt.compareSync(password, checkedUser.user_password)
+    if (!checkedPw) {
+        responseData(res, "Incorrect password", 404, null)
+        return
+    }
 
-//*
-const getUserById = async (req, res) => {
-    let { userId } = req.params;
+    // Create jwt token
+    let token = createToken({ 
+        userId: checkedUser.user_id,
+        key: new Date().getTime()
+    })
 
-    const data = await prisma.users.findFirst({
+    // Create jwt refresh token
+    let refreshToken = createRefToken({ 
+        userId: checkedUser.user_id,
+        key: new Date().getTime()
+    });
+    
+    await prisma.users.update({
         where: {
-            user_id: parseInt(userId)
+            user_id: checkedUser.user_id
+        },
+        data: {
+            refresh_token: refreshToken
         }
     })
 
-    res.send(data)
+    responseData(res, "Login successfully", 200, token)
+}
+
+/**
+ ** API: Login Facebook
+ *? METHOD: POST
+ */
+const loginFacebook = async (req, res) => {
+    //* id: facebook id
+    const { fullName, id } = req.body
+
+    let checkedUser = await prisma.users.findFirst({
+        where: {
+            face_app_id: id 
+        }
+    })
+
+    //* User exists -> return token
+    if (checkedUser) {
+        let token = createToken({ userId: checkedUser.user_id, key: new Date().getTime() })
+
+        responseData(res, "Login successfully!", 200, token)
+        return
+    } 
+
+    //? User not existed -> Create new user from facebook info
+    let newUser = {
+        full_name: fullName,
+        email: "",
+        pass_word: "",
+        face_app_id: id,
+    }
+
+    await model.users.create(newUser)
+
+    let token = createToken({ userId: newUser.user_id })
+    responseData(res, "Login successfully!", 200, token)
+}
+
+//*
+const getUsers = async (req, res) => {
+    const data = await prisma.users.findMany()
+    responseData(res, "Success!", 200, data)
 }
 
 //*
 const updateUser = async (req, res) => {
-    let { full_name, email, user_password } = req.body;
-
+    let { fullName, age, email, password } = req.body;
     let { token } = req.headers;
-    let userInfo = decodeToken(token);
 
-    let { user_id } = userInfo.data.user;
-    let encryptedPass = bcrypt.hashSync(user_password, 10)
+    let { user_id } = decodeToken(token);
 
-    let foundUser = await prisma.users.findFirst({
+    let checkedUser = await prisma.users.findFirst({
         where: {
-            user_id: user_id
+            user_id,
         }
     })
 
-    foundUser = {...foundUser, full_name: full_name, email: email, user_password: encryptedPass};
+    if (!checkedUser) {
+        responseData(res, "No user found", 404, null)
+        return
+    }
 
-    //* UPDATE users SET ... WHERE user_id = ...
-    await prisma.users.update(foundUser, {
+    let encryptedPw = bcrypt.hashSync(password, 10)
+
+    await prisma.users.update(checkedUser, {
         where: {
             user_id: user_id
+        },
+        data: {
+            full_name: fullName,
+            age,
+            email: email,
+            user_password: encryptedPw
         }
     }); 
 
-    res.send("Update information successfully!");
+    responseData(res, "Update user successfully", 200, )
 }
 
-export {userLogin, userSignUp, getUserById, updateUser}
+export {login, loginFacebook, register, getUsers, updateUser}

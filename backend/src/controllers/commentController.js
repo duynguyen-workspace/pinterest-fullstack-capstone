@@ -1,9 +1,10 @@
 import { PrismaClient } from '@prisma/client';
 import { decodeToken } from '../config/jwt.js';
+import responseData from '../config/responseData.js';
 
 let prisma = new PrismaClient()
 
-const getCommentByImageId = async (req, res) => {
+const getCommentsByImageId = async (req, res) => {
     let { imageId } = req.params;
 
     const data = await prisma.comments.findFirst({
@@ -12,15 +13,14 @@ const getCommentByImageId = async (req, res) => {
         },
     });
 
-    res.send(data)
+    responseData(res, "Success", 200, data)
 }
 
 const commentImage = async (req, res) => {
-    let { imageId, desc } = req.body;
-    let { token } = req.headers;
+    const { imageId, desc } = req.body;
+    const { token } = req.headers;
 
-    let userInfo = decodeToken(token);
-    let { user_id } = userInfo.data.user
+    const { user_id } = decodeToken(token);
 
     let newComment = {
         user_id: parseInt(user_id),
@@ -28,9 +28,10 @@ const commentImage = async (req, res) => {
         comment_date: new Date(),
         description: desc,
     }
+
     await prisma.comments.create(newComment);
     
-    res.send("Create new comment successfully!");
+    responseData(res, "Create comment successfully", 201, newComment)
 }
 
-export {getCommentByImageId, commentImage}
+export {getCommentsByImageId, commentImage}
