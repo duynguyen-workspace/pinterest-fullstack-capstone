@@ -6,7 +6,7 @@ const handleAsync = fn => async (req, res) => {
         await fn(req, res);
     } catch (exception) {
         // console.error(exception);
-        responseData(res, "InternalServerError", 500, null);
+        responseData(res, "InternalServerError", 500, exception);
     }
 };
 

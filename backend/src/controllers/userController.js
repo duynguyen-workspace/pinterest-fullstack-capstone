@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcrypt'
 import { createRefToken, createToken, decodeToken } from "../config/jwt.js";
 import responseData from '../config/responseData.js';
+import compress_images from 'compress-images'
 
 const prisma = new PrismaClient()
 
@@ -10,12 +11,12 @@ const prisma = new PrismaClient()
  *? METHOD: POST
  */
 const register = async (req, res) => {
-    const { full_name, email, user_password } = req.body;
+    const { fullName, email, password } = req.body;
 
     // Check if email already existed
-    const checkedUser = await prisma.users.findMany({
+    const checkedUser = await prisma.users.findFirst({
         where: {
-            email: email
+            email: email,
         }
     })
 
@@ -25,14 +26,16 @@ const register = async (req, res) => {
     }
 
     // Encrypt password - saltRound: 10
-    const encryptedPass = bcrypt.hashSync(user_password, 10)
+    const encryptedPass = bcrypt.hashSync(password, 10)
 
     const newUser = {
-        full_name,
+        full_name: fullName,
         age: null,
         email,
         user_password: encryptedPass,
-        avatar:"",
+        avatar: "",
+        refresh_token: "",
+        face_app_id: "", 
     }
 
     await prisma.users.create({data: newUser}); 
@@ -47,7 +50,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     const { email, password } = req.body
 
-    // Check if user exists
+    // Check if email exists
     let checkedUser = await prisma.users.findFirst({
         where: {
             email: email
@@ -61,10 +64,13 @@ const login = async (req, res) => {
     
     // Check password
     let checkedPw = bcrypt.compareSync(password, checkedUser.user_password)
+
     if (!checkedPw) {
         responseData(res, "Incorrect password", 404, null)
         return
     }
+
+    //// console.log(checkedUser)
 
     // Create jwt token
     let token = createToken({ 
@@ -72,19 +78,24 @@ const login = async (req, res) => {
         key: new Date().getTime()
     })
 
+    //// console.log("Token: ", token)
+
     // Create jwt refresh token
     let refreshToken = createRefToken({ 
         userId: checkedUser.user_id,
         key: new Date().getTime()
     });
+
+    //// console.log("Refresh token: ", refreshToken)
     
+    // 
     await prisma.users.update({
         where: {
             user_id: checkedUser.user_id
         },
         data: {
-            refresh_token: refreshToken
-        }
+            refresh_token: refreshToken,
+        },
     })
 
     responseData(res, "Login successfully", 200, token)
@@ -167,4 +178,109 @@ const updateUser = async (req, res) => {
     responseData(res, "Update user successfully", 200, )
 }
 
-export {login, loginFacebook, register, getUsers, updateUser}
+const uploadAvatar = async (req, res) => {
+    const file = req.file;
+
+    console.log("file: ", file)
+
+    const { token } = req.headers;
+    const { userId } = decodeToken(token)
+
+    let checkedUser = await prisma.users.findFirst({
+        where: {
+            user_id: parseInt(userId)
+        }
+    })
+
+    if (!checkedUser) {
+        responseData(res, "User not found!", 404, null)
+        return
+    }
+    
+    try {
+        await prisma.users.update({
+            where: {
+                user_id: parseInt(userId)
+            },
+            data: {
+                avatar: file.filename
+            }
+        })
+    } catch(err) {
+        responseData(res, "Internal error in compressing images!", 500, err)
+        throw new Error(err)
+    }
+
+    
+
+    //* Optimize image size (compress image)
+    compress_images(
+        process.cwd() + `/public/img/` + file.fileName, 
+        process.cwd() + "/public/files/", 
+        { compress_force: false, statistic: true, autoupdate: true }, false,
+        { jpg: { engine: "mozjpeg", command: ["-quality", "25"] } },
+        { png: { engine: "pngquant", command: ["--quality=20-50", "-o"] } },
+        { svg: { engine: "svgo", command: "--multipass" } },
+        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } },
+        (error, completed, statistic) => {
+        console.log("-------------");
+        console.log(error);
+        console.log(completed);
+        console.log(statistic);
+        console.log("-------------");
+        }
+    );
+
+    responseData(res, "Upload successfully", 200, file.filename)
+    
+}
+
+const uploadImages = async (req, res) => {
+    const file = req.file;
+    console.log("file: ", file)
+
+    const { token } = req.headers;
+    const { userId } = decodeToken(token)
+
+    let checkedUser = await prisma.users.findFirst({
+        where: {
+            user_id: parseInt(userId)
+        }
+    })
+
+    if (!checkedUser) {
+        responseData(res, "User not found!", 404, null)
+        return
+    }
+
+    // await prisma.users.update({
+    //     where: {
+    //         user_id: parseInt(userId)
+    //     },
+    //     data: {
+    //         avatar: file.filename
+    //     }
+    // })
+
+    //* Optimize image size (compress image)
+    // compress_images(
+    //     process.cwd() + "/public/img/" + file.fileName, 
+    //     process.cwd() + "/public/files/", 
+    //     { compress_force: false, statistic: true, autoupdate: true }, false,
+    //     { jpg: { engine: "mozjpeg", command: ["-quality", "25"] } },
+    //     { png: { engine: "pngquant", command: ["--quality=20-50", "-o"] } },
+    //     { svg: { engine: "svgo", command: "--multipass" } },
+    //     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } },
+    //     (error, completed, statistic) => {
+    //     console.log("-------------");
+    //     console.log(error);
+    //     console.log(completed);
+    //     console.log(statistic);
+    //     console.log("-------------");
+    //     }
+    // );
+
+    responseData(res, "Upload successfully", 200, file.filename)
+}
+
+export {login, loginFacebook, register, getUsers, updateUser, uploadAvatar, uploadImages}

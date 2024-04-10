@@ -7,7 +7,7 @@ let prisma = new PrismaClient()
 const getCommentsByImageId = async (req, res) => {
     let { imageId } = req.params;
 
-    const data = await prisma.comments.findFirst({
+    const data = await prisma.comments.findMany({
         where: {
             image_id: parseInt(imageId)
         },
@@ -20,18 +20,23 @@ const commentImage = async (req, res) => {
     const { imageId, desc } = req.body;
     const { token } = req.headers;
 
-    const { user_id } = decodeToken(token);
+    const { userId } = decodeToken(token);
 
     let newComment = {
-        user_id: parseInt(user_id),
+        user_id: parseInt(userId),
         image_id: parseInt(imageId),
         comment_date: new Date(),
         description: desc,
     }
 
-    await prisma.comments.create(newComment);
-    
-    responseData(res, "Create comment successfully", 201, newComment)
+    try {
+        await prisma.comments.create({
+            data: newComment
+        });
+        responseData(res, "Create comment successfully", 201, newComment)
+    } catch (err) {
+        responseData(res, "Error in creating comment", 500, err)
+    }
 }
 
 export {getCommentsByImageId, commentImage}

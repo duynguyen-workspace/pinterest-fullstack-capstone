@@ -1,4 +1,4 @@
-import { checkRefToken, checkToken, decodeToken } from "../config/jwt.js";
+import { checkRefToken, checkToken, createToken, decodeToken } from "../config/jwt.js";
 import responseData from "../config/responseData.js";
 import { PrismaClient } from '@prisma/client'
 
@@ -10,12 +10,15 @@ const prisma = new PrismaClient()
 const lockApi = (req, res, next) => { 
     try {
         let { token } = req.headers;
-        checkToken(token);
-        next();
+
+        if (!checkToken(token)) {
+            next()
+        } else {
+            throw new Error
+        }
     } catch (exception) {
         responseData(res, "Access permission denied", 401, "")
     }
-    
 };
 
 /**
@@ -35,9 +38,9 @@ const resetToken = async (req, res) => {
     // Get user data from token
     const checkedToken = decodeToken(token)
     
-    let checkedUser = await prisma.users.findMany({
+    let checkedUser = await prisma.users.findFirst({
         where: {
-            user_id: checkToken.userId,
+            user_id: checkedToken.userId,
         }
     })
 
@@ -47,10 +50,10 @@ const resetToken = async (req, res) => {
     }
 
     // Check refresh token (if expired)
-    const refreshToken = checkedUser.dataValues.refresh_token
+    const refreshToken = checkedUser.refresh_token
     const errRefToken = checkRefToken(refreshToken)
 
-    if (errRefToken && errToken.name !== "TokenExpiredError") {
+    if (errRefToken && errRefToken.name !== "TokenExpiredError") {
         responseData(res, "Access permission denied!", 401, "")
         return
     }
@@ -64,7 +67,7 @@ const resetToken = async (req, res) => {
     }
     
     // Create token
-    let newToken = createToken({ user_id: checkedUser.dataValues.user_id })
+    let newToken = createToken({ user_id: checkedUser.user_id })
 
     if (newToken) {
         responseData(res, "Reset token successfully!", 200, newToken)

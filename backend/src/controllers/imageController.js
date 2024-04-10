@@ -5,7 +5,7 @@ import { checkToken, decodeToken } from '../config/jwt.js';
 const prisma = new PrismaClient()
 
 /**
- * * API: Get all images data
+ * * Get all images data
  * ? Method: GET
  */
 const getImages = async (req, res) => {
@@ -78,15 +78,15 @@ const searchImages = async (req, res) => {
  * ? Method: GET
  */
 const getImageSavedStatus = async (req, res) => {
-    let { imageId } = req.params;
-    let { token } = req.headers;
+    const { imageId } = req.params;
+    const { token } = req.headers;
 
-    let { user_id } = decodeToken(token)
+    let { userId } = decodeToken(token) 
 
     const data = await prisma.user_images.findFirst({
         where: {
             image_id: parseInt(imageId),
-            user_id: parseInt(user_id),
+            user_id: parseInt(userId),
         },
     });
 
@@ -111,45 +111,47 @@ const getImageSavedStatus = async (req, res) => {
  * ? Method: POST
  */
 const saveImage = async (req, res) => {
-    let { imageId } = req.params;
-    let { token } = req.headers;
+    const { imageId } = req.params;
+    const { token } = req.headers;
 
-    let { user_id } = decodeToken(token)
+    const { userId } = decodeToken(token)
 
     const data = await prisma.user_images.findFirst({
         where: {
             image_id: parseInt(imageId),
-            user_id: parseInt(user_id),
+            user_id: parseInt(userId),
         },
-    });
+    }); 
 
     //* Case 1: No saved data found
     if (!data) {
         let savedModel = {
+            user_id: parseInt(userId),
             image_id: parseInt(imageId),
-            user_id: parseInt(user_id),
             saved_date: new Date(),
-            status: 1
+            status: true
         }
+
+        // console.log("model: ", savedModel)
     
         await prisma.user_images.create({data: savedModel});
-        return
+        responseData(res, "Save image successfully!", 200, savedModel)
+
+    } else { //* Case 2: If image was saved before => update saved status
+        data.status = data.status ? false : true
+        console.log(data)
+        let updatedModel = await prisma.user_images.update({
+            data: data,
+            where: {
+                user_id_image_id: {
+                    user_id: parseInt(userId),
+                    image_id: parseInt(imageId),
+                }
+            }
+        })
+
+        responseData(res, "Update saved status successfully!", 200, updatedModel)
     }
-
-    //* Case 2: If image was saved before => update saved status
-    let newSavedStatus = data.status == 1 ? 0 : 1
-
-    await prisma.user_images.update({
-        where: {
-            image_id: parseInt(imageId),
-            user_id: parseInt(user_id),
-        },
-        data: {
-            status: newSavedStatus
-        }
-    })
-
-    responseData(res, "Update saved status successfully!", 200, null)
 }
 
 /**
@@ -158,11 +160,11 @@ const saveImage = async (req, res) => {
  */
 const getCreatedImagesByUserId = async (req, res) => {
     let { token } = req.headers;
-    let { user_id } = decodeToken(token)
+    let { userId } = decodeToken(token)
 
     const data = await prisma.images.findMany({ 
         where: {
-            user_id: parseInt(user_id)
+            user_id: parseInt(userId)
         },
     });
 
@@ -173,14 +175,22 @@ const getCreatedImagesByUserId = async (req, res) => {
     }
 }
 
+/**
+ * * API: Get images that were saved by user
+ * ? Method: GET
+ */
 const getSavedImagesByUserId = async (req, res) => {
     let { token } = req.headers;
-    let { user_id } = decodeToken(token)
+    let { userId } = decodeToken(token)
 
-    const data = await prisma.user_images.findFirst({
+    const data = await prisma.user_images.findMany({
         where: {
-            user_id: parseInt(user_id)
+            user_id: parseInt(userId),
+            status: true
         },
+        include: {
+            images: true
+        }
     });
 
     if (data) {

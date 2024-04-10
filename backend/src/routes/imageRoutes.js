@@ -8,13 +8,13 @@ const imageRoute = express.Router()
 //* 
 imageRoute.get("/get-images", handleAsync(getImages))
 imageRoute.get("/get-image-by-id/:imageId", handleAsync(getImageById))
-imageRoute.get("/get-image-saved-status/:imageId", lockApi, handleAsync(getImageSavedStatus))
-imageRoute.get("/search-images/:searchTerm", handleAsync(searchImages))
+imageRoute.get("/get-image-saved-status/:imageId", lockApi, getImageSavedStatus)
+imageRoute.get("/search-images", handleAsync(searchImages))
 imageRoute.get("/get-created-images", lockApi, handleAsync(getCreatedImagesByUserId))
 imageRoute.get("/get-saved-images", lockApi, handleAsync(getSavedImagesByUserId))
 
 //TODO
-imageRoute.post("/save-image", lockApi, handleAsync(saveImage))
+imageRoute.post("/save-image/:imageId", lockApi, handleAsync(saveImage))
 
 //!
 imageRoute.delete("/delete-image/:imageId", lockApi, handleAsync(deleteImage))

@@ -22,7 +22,7 @@ const createToken = (data) => {
  * ? Secret Key: PINTEREST_SECRET
  * 
  * @param {*} token
- * @returns boolean
+ * @returns string (if error) and null (if no error)
  */
 const checkToken = (token) => {
     return jwt.verify(token, "PINTEREST_SECRET", error => error);
@@ -41,7 +41,7 @@ const decodeToken = (token) => {
  * * Function: Generate Refresh Token
  * ? Encryption Algorithm: HS256
  * ? Secret Key: PINTEREST_SECRET_REF
- * ? Expiration: 3 hours
+ * ? Expiration: 1 month
  * 
  * @param {*} data: object contains user's info (user_id) and key (current datetime)
  * @returns: jwt encrypted token
@@ -49,7 +49,7 @@ const decodeToken = (token) => {
 const createRefToken = (data) => {
     let token = jwt.sign(data, "PINTEREST_SECRET_REF", { 
         algorithm: "HS256",
-        expiresIn: "1m" 
+        expiresIn: "30d" 
     })
     return token
 }
