@@ -1,0 +1,578 @@
+{
+	"info": {
+		"_postman_id": "f646828c-5295-4e19-8091-e9b1ab8a9865",
+		"name": "API Pinterest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29805321"
+	},
+	"item": [
+		{
+			"name": "images",
+			"item": [
+				{
+					"name": "Get images data",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/images/get-images",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"images",
+								"get-images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get image data by id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/images/get-image-by-id/3",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"images",
+								"get-image-by-id",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Search images",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"searchTerm\": \"land\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/images/search-images",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"images",
+								"search-images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get image saved status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTE3ODUyOTA5MDYsImlhdCI6MTcxMTc4NTI5MCwiZXhwIjoxNzExNzk2MDkwfQ.we7IJlM2iUwdTzp8CVbhho8qfxyLJBfLHsIlBJjBXIg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/images/get-image-saved-status/12",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"images",
+								"get-image-saved-status",
+								"12"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get saved images from user",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTE3ODUyOTA5MDYsImlhdCI6MTcxMTc4NTI5MCwiZXhwIjoxNzExNzk2MDkwfQ.we7IJlM2iUwdTzp8CVbhho8qfxyLJBfLHsIlBJjBXIg",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/images/get-saved-images",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"images",
+								"get-saved-images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get created images from user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTE3ODUyOTA5MDYsImlhdCI6MTcxMTc4NTI5MCwiZXhwIjoxNzExNzk2MDkwfQ.we7IJlM2iUwdTzp8CVbhho8qfxyLJBfLHsIlBJjBXIg",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/images/get-created-images",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"images",
+								"get-created-images"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Save image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTI3NDQ0MjEzMjMsImlhdCI6MTcxMjc0NDQyMSwiZXhwIjoxNzEyNzU1MjIxfQ.LiJs7EIAlO0m4OC7KzLxVcu-WRT7L3t72n6a8R1VH0M",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/images/save-image/13",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"images",
+								"save-image",
+								"13"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete image",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/images/delete-image/20",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"images",
+								"delete-image",
+								"20"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"duynguyen02008@gmail.com\",\n    \"password\": \"duy1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"Duy Nguyen\",\n    \"email\": \"duynguyen02008@gmail.com\", \n    \"password\": \"duy1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login Facebook",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/login-facebook",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"login-facebook"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reset token",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTI3NDU4MTIxMjcsImlhdCI6MTcxMjc0NTgxMiwiZXhwIjoxNzEyNzU2NjEyfQ.SvYd-BRPJQuhPYXHyM4pKiI_e2O1RJoPI7pdNWBoLKk",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/reset-token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"reset-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user information",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTQ0MDA5OTc4ODUsImlhdCI6MTcxNDQwMDk5NywiZXhwIjoxNzE0NDExNzk3fQ.-0D9tGOxUT64CTS0wWSKdqPxrks8qr2ScSmA1qPgPg8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fullName\": \"Nguyen Anh Duy\",\n    \"age\": 20,\n    \"email\": \"duynguyen02008@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/update",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update user password",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTQ0MDA5OTc4ODUsImlhdCI6MTcxNDQwMDk5NywiZXhwIjoxNzE0NDExNzk3fQ.-0D9tGOxUT64CTS0wWSKdqPxrks8qr2ScSmA1qPgPg8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"password\": \"duy1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/users/update-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"update-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload user avatar",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTQ0MDA5OTc4ODUsImlhdCI6MTcxNDQwMDk5NywiZXhwIjoxNzE0NDExNzk3fQ.-0D9tGOxUT64CTS0wWSKdqPxrks8qr2ScSmA1qPgPg8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "avatar",
+									"type": "file",
+									"src": "/Users/nguyenanhduy/Downloads/avatar.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/users/upload-avatar",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"upload-avatar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload image",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTQ0MDA5OTc4ODUsImlhdCI6MTcxNDQwMDk5NywiZXhwIjoxNzE0NDExNzk3fQ.-0D9tGOxUT64CTS0wWSKdqPxrks8qr2ScSmA1qPgPg8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/Users/nguyenanhduy/Downloads/login.png"
+								},
+								{
+									"key": "imageName",
+									"value": "LoginUI",
+									"type": "text"
+								},
+								{
+									"key": "description",
+									"value": "A sample modern UI/UX interface for login",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/users/upload-image",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"upload-image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTI3NDc1NzM3OTgsImlhdCI6MTcxMjc0NzU3MywiZXhwIjoxNzEyNzU4MzczfQ.3uVqZoXogoDfjicSK8ABtz7IpzNQWRlNcBXTbpybOMU",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/users/get-users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"users",
+								"get-users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "comments",
+			"item": [
+				{
+					"name": "Comment image",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTI3NDY3NDc5NDgsImlhdCI6MTcxMjc0Njc0NywiZXhwIjoxNzEyNzU3NTQ3fQ.9sb0pb031V2l8NEC4_L6dzCm_VTan3orXBXxuIMk21M",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"imageId\": \"1\",\n    \"desc\": \"I want to comment 2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/comments/comment-image",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments",
+								"comment-image"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get comments data",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyLCJrZXkiOjE3MTI3NDY3NDc5NDgsImlhdCI6MTcxMjc0Njc0NywiZXhwIjoxNzEyNzU3NTQ3fQ.9sb0pb031V2l8NEC4_L6dzCm_VTan3orXBXxuIMk21M",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/comments/get-comments/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"comments",
+								"get-comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		}
+	]
+}

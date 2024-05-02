@@ -18,4 +18,4 @@ imageRoute.post("/save-image/:imageId", lockApi, handleAsync(saveImage))
 
 //!
 imageRoute.delete("/delete-image/:imageId", lockApi, handleAsync(deleteImage))
-export default imageRoute  
+export default imageRoute

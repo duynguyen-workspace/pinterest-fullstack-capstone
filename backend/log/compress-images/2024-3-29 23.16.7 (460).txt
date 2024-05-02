@@ -1,0 +1,7 @@
+File from: [/Users/nguyenanhduy/CyberSoft/NODE 35 /node35_capstone_orm/backend/public/img/undefined]
+
+File to: [/Users/nguyenanhduy/CyberSoft/NODE 35 /node35_capstone_orm/backend/public/files/undefined]
+
+Compression algorithm: [-]
+
+Description: File does not exist!

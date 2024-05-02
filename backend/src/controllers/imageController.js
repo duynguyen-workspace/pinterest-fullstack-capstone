@@ -13,19 +13,24 @@ const getImages = async (req, res) => {
     responseData(res, "Success!", 200, data)
 }
 
+/**
+ * 
+ * @param {*} page: Page index   
+ * @param {*} size: Number of elements display in 1 page (page size)
+ */
 const getImagePagination = async (req, res) => {
-    let { page } = req.params
+    let { page } = req.query;
+    let { size } = req.params;
 
-    let pageSize = 3
 
     let data = await prisma.images.findAll({
-        limit: pageSize,
-        offset: pageSize * (page - 1)
+        limit: size,
+        offset: size * (page - 1)
     })
 
     let dataCount = await model.video.count()
 
-    responseData(res, "Success", 200, {content: data, pagination: Math.ceil(dataCount / pageSize)})
+    responseData(res, "Success", 200, {content: data, total: dataCount, pagination: Math.ceil(dataCount / pageSize)})
 }
 
 /**

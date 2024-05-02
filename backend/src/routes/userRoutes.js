@@ -1,5 +1,5 @@
 import express from "express";
-import { getUsers, login, loginFacebook, register, updateUser, uploadAvatar, uploadImages } from "../controllers/userController.js";
+import { getUsers, login, loginFacebook, register, updatePassword, updateUser, uploadAvatar, uploadImage } from "../controllers/userController.js";
 import { lockApi, resetToken } from "../controllers/authController.js";
 import { handleAsync } from "../utils/hof.js";
 import { upload } from "../controllers/uploadController.js";
@@ -18,11 +18,11 @@ userRoute.post("/reset-token", resetToken)
 //TODO: UPDATE USER INFORMATION API
 userRoute.put("/update", lockApi, handleAsync(updateUser))
 
+userRoute.put("/update-password", lockApi, handleAsync(updatePassword))
+
 userRoute.put("/upload-avatar", lockApi, upload.single("avatar"), uploadAvatar)
 
-userRoute.put("/upload-image", lockApi, upload.single("image"), handleAsync(uploadImages))
-
-userRoute.put("/upload-images", lockApi, upload.array("images"), handleAsync(uploadImages))
+userRoute.put("/upload-image", lockApi, upload.single("image"), handleAsync(uploadImage))
 //! For upload multiple files -> upload.array("avatar")
 
 export default userRoute

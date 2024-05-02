@@ -35,10 +35,10 @@ const register = async (req, res) => {
         user_password: encryptedPass,
         avatar: "",
         refresh_token: "",
-        face_app_id: "", 
+        face_app_id: "",
     }
 
-    await prisma.users.create({data: newUser}); 
+    await prisma.users.create({ data: newUser });
 
     responseData(res, "Register successfully!", 201, newUser)
 }
@@ -61,7 +61,7 @@ const login = async (req, res) => {
         responseData(res, "Email not existed!", 404, null)
         return
     }
-    
+
     // Check password
     let checkedPw = bcrypt.compareSync(password, checkedUser.user_password)
 
@@ -73,7 +73,7 @@ const login = async (req, res) => {
     //// console.log(checkedUser)
 
     // Create jwt token
-    let token = createToken({ 
+    let token = createToken({
         userId: checkedUser.user_id,
         key: new Date().getTime()
     })
@@ -81,13 +81,13 @@ const login = async (req, res) => {
     //// console.log("Token: ", token)
 
     // Create jwt refresh token
-    let refreshToken = createRefToken({ 
+    let refreshToken = createRefToken({
         userId: checkedUser.user_id,
         key: new Date().getTime()
     });
 
     //// console.log("Refresh token: ", refreshToken)
-    
+
     // 
     await prisma.users.update({
         where: {
@@ -111,7 +111,7 @@ const loginFacebook = async (req, res) => {
 
     let checkedUser = await prisma.users.findFirst({
         where: {
-            face_app_id: id 
+            face_app_id: id
         }
     })
 
@@ -121,7 +121,7 @@ const loginFacebook = async (req, res) => {
 
         responseData(res, "Login successfully!", 200, token)
         return
-    } 
+    }
 
     //? User not existed -> Create new user from facebook info
     let newUser = {
@@ -143,16 +143,52 @@ const getUsers = async (req, res) => {
     responseData(res, "Success!", 200, data)
 }
 
-//*
+/**
+ * 
+ * 
+ */
 const updateUser = async (req, res) => {
-    let { fullName, age, email, password } = req.body;
+    let { fullName, age, email } = req.body;
     let { token } = req.headers;
 
-    let { user_id } = decodeToken(token);
+    let { userId } = decodeToken(token);
 
     let checkedUser = await prisma.users.findFirst({
         where: {
-            user_id,
+            user_id: parseInt(userId),
+        }
+    })
+
+    if (!checkedUser) {
+        responseData(res, "No user found", 404, null)
+        return
+    }
+
+    let newData = {
+        full_name: fullName,
+        age,
+        email: email,
+    }
+
+    await prisma.users.update({
+        where: {
+            user_id: parseInt(userId)
+        },
+        data: newData
+    });
+
+    responseData(res, "Update user successfully", 200, newData)
+}
+
+const updatePassword = async (req, res) => {
+    let { password } = req.body;
+    let { token } = req.headers;
+
+    let { userId } = decodeToken(token);
+
+    let checkedUser = await prisma.users.findFirst({
+        where: {
+            user_id: parseInt(userId),
         }
     })
 
@@ -163,25 +199,21 @@ const updateUser = async (req, res) => {
 
     let encryptedPw = bcrypt.hashSync(password, 10)
 
-    await prisma.users.update(checkedUser, {
+    await prisma.users.update({
         where: {
-            user_id: user_id
+            user_id: parseInt(userId)
         },
         data: {
-            full_name: fullName,
-            age,
-            email: email,
             user_password: encryptedPw
         }
-    }); 
+    });
 
-    responseData(res, "Update user successfully", 200, )
+    responseData(res, "Update user password successfully", 200, "")
+
 }
 
 const uploadAvatar = async (req, res) => {
     const file = req.file;
-
-    console.log("file: ", file)
 
     const { token } = req.headers;
     const { userId } = decodeToken(token)
@@ -196,48 +228,41 @@ const uploadAvatar = async (req, res) => {
         responseData(res, "User not found!", 404, null)
         return
     }
-    
-    try {
-        await prisma.users.update({
-            where: {
-                user_id: parseInt(userId)
-            },
-            data: {
-                avatar: file.filename
-            }
-        })
-    } catch(err) {
-        responseData(res, "Internal error in compressing images!", 500, err)
-        throw new Error(err)
-    }
 
-    
+    await prisma.users.update({
+        where: {
+            user_id: parseInt(userId)
+        },
+        data: {
+            avatar: file.filename
+        }
+    })
 
     //* Optimize image size (compress image)
     compress_images(
-        process.cwd() + `/public/img/` + file.fileName, 
-        process.cwd() + "/public/files/", 
+        process.cwd() + `/public/img/` + file.fileName,
+        process.cwd() + "/public/files/",
         { compress_force: false, statistic: true, autoupdate: true }, false,
         { jpg: { engine: "mozjpeg", command: ["-quality", "25"] } },
         { png: { engine: "pngquant", command: ["--quality=20-50", "-o"] } },
         { svg: { engine: "svgo", command: "--multipass" } },
         { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } },
         (error, completed, statistic) => {
-        console.log("-------------");
-        console.log(error);
-        console.log(completed);
-        console.log(statistic);
-        console.log("-------------");
+            console.log("-------------");
+            console.log(error);
+            console.log(completed);
+            console.log(statistic);
+            console.log("-------------");
         }
     );
 
     responseData(res, "Upload successfully", 200, file.filename)
-    
 }
 
-const uploadImages = async (req, res) => {
+const uploadImage = async (req, res) => {
     const file = req.file;
-    console.log("file: ", file)
+    const { imageName, description } = req.body;
+
 
     const { token } = req.headers;
     const { userId } = decodeToken(token)
@@ -253,34 +278,37 @@ const uploadImages = async (req, res) => {
         return
     }
 
-    // await prisma.users.update({
-    //     where: {
-    //         user_id: parseInt(userId)
-    //     },
-    //     data: {
-    //         avatar: file.filename
-    //     }
-    // })
+    let newImage = {
+        user_id: parseInt(userId),
+        image_name: imageName,
+        url: file.filename,
+        description
+    }
 
+    try {
+        await prisma.images.create({ data: newImage })
+    } catch (err) {
+        throw new Error(err)
+    }
     //* Optimize image size (compress image)
-    // compress_images(
-    //     process.cwd() + "/public/img/" + file.fileName, 
-    //     process.cwd() + "/public/files/", 
-    //     { compress_force: false, statistic: true, autoupdate: true }, false,
-    //     { jpg: { engine: "mozjpeg", command: ["-quality", "25"] } },
-    //     { png: { engine: "pngquant", command: ["--quality=20-50", "-o"] } },
-    //     { svg: { engine: "svgo", command: "--multipass" } },
-    //     { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } },
-    //     (error, completed, statistic) => {
-    //     console.log("-------------");
-    //     console.log(error);
-    //     console.log(completed);
-    //     console.log(statistic);
-    //     console.log("-------------");
-    //     }
-    // );
+    compress_images(
+        process.cwd() + "/public/img/" + file.fileName,
+        process.cwd() + "/public/files/",
+        { compress_force: false, statistic: true, autoupdate: true }, false,
+        { jpg: { engine: "mozjpeg", command: ["-quality", "25"] } },
+        { png: { engine: "pngquant", command: ["--quality=20-50", "-o"] } },
+        { svg: { engine: "svgo", command: "--multipass" } },
+        { gif: { engine: "gifsicle", command: ["--colors", "64", "--use-col=web"] } },
+        (error, completed, statistic) => {
+            console.log("-------------");
+            console.log(error);
+            console.log(completed);
+            console.log(statistic);
+            console.log("-------------");
+        }
+    );
 
     responseData(res, "Upload successfully", 200, file.filename)
 }
 
-export {login, loginFacebook, register, getUsers, updateUser, uploadAvatar, uploadImages}
+export { login, loginFacebook, register, getUsers, updateUser, updatePassword, uploadAvatar, uploadImage }
